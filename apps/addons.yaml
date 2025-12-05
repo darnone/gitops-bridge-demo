@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-addons
+  namespace: argocd
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            environment: dev
+  template:
+    metadata:
+      name: 'eks-base-addons'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/darnone/gitops-bridge-demo'
+        path: 'addons'
+        targetRevision: 'main'
+        directory:
+          recurse: true
+      destination:
+        namespace: 'argocd'
+        name: '{{name}}'
+      syncPolicy:
+        automated: {}
